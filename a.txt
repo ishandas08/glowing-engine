@@ -1,0 +1,59 @@
+Build a full-stack web app for the Affecio Hacks ‘26 challenge “Trust Before Connection”: improve online safety, privacy, and authenticity in a dating and social discovery platform for college students. The app must be deployable to Vercel.
+
+Goal: A campus-only social platform where users join through verified college email addresses, control what they share, and can see trust signals about other profiles before they connect.
+
+Tech stack:
+
+Frontend: React with Vite, JavaScript (no TypeScript)
+Backend: Node.js with Express, JavaScript (no TypeScript), deployed as a Vercel serverless function
+Database: MongoDB Atlas with Mongoose
+Auth: Google OAuth restricted to a college domain (e.g. @kiit.ac.in), with JWT sessions
+Images: Cloudinary for profile photo uploads (no local disk storage)
+
+Project structure:
+
+affecio-trust/
+├── client/                  # React + Vite app
+│   ├── src/
+│   └── package.json
+├── api/
+│   └── index.js             # Exports the Express app for Vercel
+├── server/
+│   ├── app.js               # Express app (routes, middleware)
+│   ├── models/              # User, Profile, Report, Block
+│   ├── routes/
+│   ├── middleware/
+│   └── lib/db.js            # Cached Mongoose connection
+├── vercel.json              # Routes /api/* to api/index.js, serves client build
+├── .env.example
+└── README.md
+
+Core features (MVP):
+
+Verified sign-up: Google sign-in only. Reject any email outside the allowed domain. Store the user and issue a session token.
+Profile with privacy controls: Users add a name, bio, interests, year of study, and photos. Each field has a visibility setting (everyone on campus, matches only, or hidden).
+Trust signals: Show a “verified student” badge and a trust score on each profile, calculated from verified email, profile completeness, account age, and report history.
+Report and block: Users can report or block a profile. Reports are stored with a reason, and an admin view lists them for review.
+Safety tools: A “meet safely” checklist before first meetups, and an option to share contact details for a limited time that expires automatically.
+
+Deployment requirements:
+
+api/index.js exports the Express app as a serverless handler.
+server/lib/db.js caches the Mongoose connection on the global object so warm invocations reuse it.
+vercel.json rewrites /api/(.*) to /api/index and serves the Vite build from client/dist.
+Photo uploads go directly to Cloudinary. The server stores only the returned URL. No files are written to disk.
+No WebSockets or long-running background jobs. Expiring contact shares are checked at read time, not by a timer.
+All secrets come from environment variables: MONGODB_URI, JWT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, ALLOWED_EMAIL_DOMAIN, CLOUDINARY_URL, CLIENT_URL. Document each in .env.example and the README.
+The README must include the Vercel setup steps, Google Cloud redirect URI configuration for the production domain, and the Atlas IP access setting.
+
+Out of scope: Face matching or real photo verification.
+
+Deliverables:
+
+All files listed in the project structure
+Mongoose models for User, Profile, Report, and Block
+REST API routes with input validation and clear error responses
+React pages for sign-in, profile setup, browsing profiles, and the admin report view
+A plan.md describing the architecture and order of work
+
+Constraints: Keep the code simple and readable, with comments on the non-obvious parts. Build the backend auth first, then profile features, then trust and safety features. Test that the app runs locally with vercel dev before finishing.
