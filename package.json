@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vercel dev",
-    "build": "cd client && npm run build"
+    "start": "node server/server.js",
+    "server": "node server/server.js",
+    "client": "cd client && npm run dev",
+    "dev": "node server/server.js",
+    "test": "node scripts/test-api.js",
+    "build": "cd client && npm run build",
+    "seed": "node server/seed.js",
+    "install:all": "npm install && cd client && npm install"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
